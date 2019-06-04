@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Сергей Диков](https://up.htmlacademy.ru/javascript/17/user/801717).
-* Наставник: `Неизвестно`.
+* Наставник: [Дмитрий Лебедев](https://htmlacademy.ru/profile/id51265).
 
 ---
 
