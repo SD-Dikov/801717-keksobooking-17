@@ -48,8 +48,8 @@ var adList = getAdList(avatarNumbers, placeType);
 var renderPin = function (dataList, i) { // функция создания метки на основе шаблона и заполнения ее данными
   var pinTamplate = document.querySelector('#pin').content.querySelector('.map__pin');
   var pinElement = pinTamplate.cloneNode(true);
-  pinElement.style.left = dataList[i].location.x + 25 + 'px';
-  pinElement.style.top = dataList[i].location.y + 70 + 'px';
+  pinElement.style.left = dataList[i].location.x - 25 + 'px';
+  pinElement.style.top = dataList[i].location.y - 70 + 'px';
   pinElement.querySelector('img').src = dataList[i].author.avatar;
   pinElement.querySelector('img').alt = dataList[i].offer.type;
 
