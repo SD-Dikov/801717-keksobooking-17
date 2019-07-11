@@ -2,6 +2,10 @@
 
 var MAP_PIN_MAIN_WIDTH = 65;
 var MAP_PIN_MAIN_HEIGHT = 82;
+var BUNGALO_MIN_PRICE = 0;
+var FLAT_MIN_PRICE = 1000;
+var HOUSE_MIN_PRICE = 5000;
+var PALACE_MIN_PRICE = 10000;
 var adForm = document.querySelector('.ad-form');
 var fieldsetList = adForm.querySelectorAll('fieldset');
 var mapPinMain = document.querySelector('.map__pin--main');
@@ -10,15 +14,13 @@ var mapPinMainX = parseInt(mapPinMain.style.left, 10) + (MAP_PIN_MAIN_WIDTH / 2)
 var mapPinMainY = parseInt(mapPinMain.style.top, 10) + MAP_PIN_MAIN_HEIGHT;
 var inputAddress = adForm.querySelector('#address');
 var avatarNumbers = [1, 2, 3, 4, 5, 6, 7, 8];
-var placeType = ['palace', 'flat', 'house', 'bungalo'];
+var placeType = ['bungalo', 'flat', 'house', 'palace'];
 var mapBlock = document.querySelector('.map');
 var pinList = document.querySelector('.map__pins');
 var inputPrice = document.querySelector('#price');
-var selectorType = document.querySelector('#type');
-var selectorTimein = document.querySelector('#timein');
-var selectorTimeinValueList = selectorTimein.options;
-var selectorTimeout = document.querySelector('#timeout');
-var selectorTimeoutValueList = selectorTimeout.options;
+var fieldType = document.querySelector('#type');
+var fieldTimeIn = document.querySelector('#timein');
+var fieldTimeOut = document.querySelector('#timeout');
 
 var makeFieldsetDisabled = function (elementList) { // функция добавления элементам из коллекции атрибута disabled
   for (var i = 0; i < elementList.length; i++) {
@@ -70,23 +72,26 @@ var getPinsFragment = function (dataList) { // функция создания �
 };
 
 var getMinPrice = function (houseType) { // функция получения минимальной цены, в зависимости от типа жилья
-  var minPrice = 0;
-  if (houseType === 'flat') {
-    minPrice = 1000;
-  } else if (houseType === 'house') {
-    minPrice = 5000;
-  } else if (houseType === 'palace') {
-    minPrice = 10000;
+  var minPrice;
+  switch (houseType) {
+    case placeType[0]:
+      minPrice = BUNGALO_MIN_PRICE;
+      break;
+    case placeType[1]:
+      minPrice = FLAT_MIN_PRICE;
+      break;
+    case placeType[2]:
+      minPrice = HOUSE_MIN_PRICE;
+      break;
+    case placeType[3]:
+      minPrice = PALACE_MIN_PRICE;
+      break;
   }
   return minPrice;
 };
-
-var getDependentValue = function (selector1, selector2, optionsList1, optionsList2) { // функция получения зависимости одного селектора от другого
-  for (var i = 0; i < optionsList1.length; i++) {
-    if (selector1.value === optionsList1[i].value) {
-      selector2.value = optionsList2[i].value;
-    }
-  }
+var setTime = function (evt) {
+  var select = evt.target === fieldTimeIn ? fieldTimeOut : fieldTimeIn;
+  select.value = evt.target.value;
 };
 
 inputAddress.setAttribute('value', mapPinMainX + ',' + mapPinMainY); // внесение координат конца метки в поле адреса
@@ -103,15 +108,14 @@ mapPinMain.addEventListener('click', function () { // перевод стран�
   pinList.appendChild(getPinsFragment(adList)); // добавление созданного фрагмента в разметку
 });
 
-selectorType.addEventListener('change', function () { // обработчик измененения типа жилья, изменяющий минимальное значение и плейсхолдер поля цены
-  var selectorTypeValue = selectorType.value;
-  inputPrice.min = getMinPrice(selectorTypeValue);
-  inputPrice.placeholder = getMinPrice(selectorTypeValue);
+fieldType.addEventListener('change', function () { // изменить тип жилья
+  inputPrice.min = getMinPrice(fieldType.value);
+  inputPrice.placeholder = getMinPrice(fieldType.value);
 });
 
-selectorTimein.addEventListener('change', function () { // обработчик измененения времени въезда, изменяющий время выезда
-  getDependentValue(selectorTimein, selectorTimeout, selectorTimeinValueList, selectorTimeoutValueList);
+fieldTimeIn.addEventListener('change', function (evt) { // обработчик измененения времени въезда, изменяющий время выезда
+  setTime(evt);
 });
-selectorTimeout.addEventListener('change', function () { // обработчик измененения времени выезда, изменяющий время въезда
-  getDependentValue(selectorTimeout, selectorTimein, selectorTimeoutValueList, selectorTimeinValueList);
+fieldTimeOut.addEventListener('change', function (evt) { // обработчик измененения времени выезда, изменяющий время въезда
+  setTime(evt);
 });
