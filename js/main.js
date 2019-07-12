@@ -1,20 +1,14 @@
 'use strict';
 
-var MAP_PIN_MAIN_WIDTH = 65;
-var MAP_PIN_MAIN_HEIGHT = 82;
-var BUNGALO_MIN_PRICE = 0;
-var FLAT_MIN_PRICE = 1000;
-var HOUSE_MIN_PRICE = 5000;
-var PALACE_MIN_PRICE = 10000;
+var MAP_PIN_MAIN_WIDTH = 66;
+var MAP_PIN_MAIN_HEIGHT = 80;
 var adForm = document.querySelector('.ad-form');
 var fieldsetList = adForm.querySelectorAll('fieldset');
 var mapPinMain = document.querySelector('.map__pin--main');
 var mapFilters = document.querySelector('.map__filters');
-var mapPinMainX = parseInt(mapPinMain.style.left, 10) + (MAP_PIN_MAIN_WIDTH / 2);
-var mapPinMainY = parseInt(mapPinMain.style.top, 10) + MAP_PIN_MAIN_HEIGHT;
 var inputAddress = adForm.querySelector('#address');
 var avatarNumbers = [1, 2, 3, 4, 5, 6, 7, 8];
-var placeType = ['bungalo', 'flat', 'house', 'palace'];
+var placeTypeMinPrice = [{type: 'bungalo', minPrice: 0}, {type: 'flat', minPrice: 1000}, {type: 'house', minPrice: 5000}, {type: 'palace', minPrice: 10000}];
 var mapBlock = document.querySelector('.map');
 var pinList = document.querySelector('.map__pins');
 var inputPrice = document.querySelector('#price');
@@ -45,14 +39,15 @@ var getAdList = function (imageNumbers, typeList) { // Функция созда
     var randomTypeValue = randomInteger(0, typeList.length - 1);
     adList.push({
       'author': {'avatar': 'img/avatars/user0' + imageNumbers[i] + '.png'},
-      'offer': {'type': typeList[randomTypeValue]},
+      'offer': {'type': typeList[randomTypeValue].type},
       'location': {'x': locationX, 'y': locationY}
     });
   }
   return adList;
 };
 
-var adList = getAdList(avatarNumbers, placeType);
+var adList = getAdList(avatarNumbers, placeTypeMinPrice);
+
 var renderPin = function (dataList, i) { // функция создания метки на основе шаблона и заполнения ее данными
   var pinTamplate = document.querySelector('#pin').content.querySelector('.map__pin');
   var pinElement = pinTamplate.cloneNode(true);
@@ -71,46 +66,83 @@ var getPinsFragment = function (dataList) { // функция создания �
   return pinsFragment;
 };
 
-var getMinPrice = function (houseType) { // функция получения минимальной цены, в зависимости от типа жилья
+var getMinPrice = function (houseType, typeMinPriceList) { // функция получения минимальной цены, в зависимости от типа жилья
   var minPrice;
-  switch (houseType) {
-    case placeType[0]:
-      minPrice = BUNGALO_MIN_PRICE;
-      break;
-    case placeType[1]:
-      minPrice = FLAT_MIN_PRICE;
-      break;
-    case placeType[2]:
-      minPrice = HOUSE_MIN_PRICE;
-      break;
-    case placeType[3]:
-      minPrice = PALACE_MIN_PRICE;
-      break;
+  for (var i = 0; i < typeMinPriceList.length; i++) {
+    if (houseType === typeMinPriceList[i].type) {
+      minPrice = typeMinPriceList[i].minPrice;
+    }
   }
   return minPrice;
 };
+
 var setTime = function (evt) {
   var select = evt.target === fieldTimeIn ? fieldTimeOut : fieldTimeIn;
   select.value = evt.target.value;
 };
 
-inputAddress.setAttribute('value', mapPinMainX + ',' + mapPinMainY); // внесение координат конца метки в поле адреса
+inputAddress.setAttribute('value', (parseInt(mapPinMain.style.left, 10) + parseInt((MAP_PIN_MAIN_WIDTH / 2), 10)) + ', ' + (parseInt(mapPinMain.style.top, 10) + MAP_PIN_MAIN_HEIGHT)); // внесение координат конца метки в поле адреса
 
 makeFieldsetDisabled(fieldsetList); // блокировка всех fieldset внутри формы ad-form
 
 mapFilters.classList.add('ad-form--disabled'); // добавление mapFilters класса ad-form--disabled
 
-mapPinMain.addEventListener('click', function () { // перевод страницы в активное состояние по клику
+mapPinMain.addEventListener('mousedown', function (evt) { // отслеживание нажатия кнопки мыши
+  evt.preventDefault();
+
+  if (mapBlock.classList.contains('map--faded')) { // условие ограничивающее повление случайный меток при каждом нажатии
+    pinList.appendChild(getPinsFragment(adList)); // добавление созданного фрагмента в разметку
+  }
+
   mapBlock.classList.remove('map--faded');
   adForm.classList.remove('ad-form--disabled');
   mapFilters.classList.remove('ad-form--disabled');
   makeFieldsetAnabled(fieldsetList);
-  pinList.appendChild(getPinsFragment(adList)); // добавление созданного фрагмента в разметку
+
+  var startCoords = {
+    x: evt.clientX,
+    y: evt.clientY
+  };
+  var onMouseMove = function (moveEvt) { // отслеживание премещения мыши
+    moveEvt.preventDefault();
+
+    var shift = {
+      x: startCoords.x - moveEvt.clientX,
+      y: startCoords.y - moveEvt.clientY
+    };
+
+    startCoords = {
+      x: moveEvt.clientX,
+      y: moveEvt.clientY
+    };
+    mapPinMain.style.top = (mapPinMain.offsetTop - shift.y) + 'px';
+    if (parseInt(mapPinMain.style.top, 10) <= (130 - MAP_PIN_MAIN_HEIGHT)) { // условие ограничивающее поле перемещения
+      mapPinMain.style.top = (130 - MAP_PIN_MAIN_HEIGHT) + 'px';
+    } else if (parseInt(mapPinMain.style.top, 10) >= 630) {
+      mapPinMain.style.top = 630 + 'px';
+    }
+    mapPinMain.style.left = (mapPinMain.offsetLeft - shift.x) + 'px';
+    if (parseInt(mapPinMain.style.left, 10) <= (0 - (MAP_PIN_MAIN_WIDTH / 2))) { // условие ограничивающее поле перемещения
+      mapPinMain.style.left = (0 - (MAP_PIN_MAIN_WIDTH / 2)) + 'px';
+    } else if (parseInt(mapPinMain.style.left, 10) >= 1200 - (MAP_PIN_MAIN_WIDTH / 2)) {
+      mapPinMain.style.left = (1200 - (MAP_PIN_MAIN_WIDTH / 2)) + 'px';
+    }
+
+    inputAddress.setAttribute('value', (parseInt(mapPinMain.style.left, 10) + parseInt((MAP_PIN_MAIN_WIDTH / 2), 10)) + ', ' + (parseInt(mapPinMain.style.top, 10) + MAP_PIN_MAIN_HEIGHT)); // внесение координат конца метки в поле адреса
+  };
+  var onMouseUp = function (upEvt) { // отслеживание отпускания кнопки мыши
+    upEvt.preventDefault();
+
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  };
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
 });
 
 fieldType.addEventListener('change', function () { // изменить тип жилья
-  inputPrice.min = getMinPrice(fieldType.value);
-  inputPrice.placeholder = getMinPrice(fieldType.value);
+  inputPrice.min = getMinPrice(fieldType.value, placeTypeMinPrice);
+  inputPrice.placeholder = getMinPrice(fieldType.value, placeTypeMinPrice);
 });
 
 fieldTimeIn.addEventListener('change', function (evt) { // обработчик измененения времени въезда, изменяющий время выезда
