@@ -2,13 +2,17 @@
 
 var MAP_PIN_MAIN_WIDTH = 66;
 var MAP_PIN_MAIN_HEIGHT = 80;
+var Y_TOP_BORDER = 130;
+var Y_BOTTOM_BORDER = 630;
+var X_LEFT_BORDER = 0;
+var X_RIGHT_BORDER = 1200;
+var PLACE_TYPE = [{house: 'bungalo', minPrice: 0}, {house: 'flat', minPrice: 1000}, {house: 'house', minPrice: 5000}, {house: 'palace', minPrice: 10000}];
 var adForm = document.querySelector('.ad-form');
 var fieldsetList = adForm.querySelectorAll('fieldset');
 var mapPinMain = document.querySelector('.map__pin--main');
 var mapFilters = document.querySelector('.map__filters');
 var inputAddress = adForm.querySelector('#address');
 var avatarNumbers = [1, 2, 3, 4, 5, 6, 7, 8];
-var placeTypeMinPrice = [{type: 'bungalo', minPrice: 0}, {type: 'flat', minPrice: 1000}, {type: 'house', minPrice: 5000}, {type: 'palace', minPrice: 10000}];
 var mapBlock = document.querySelector('.map');
 var pinList = document.querySelector('.map__pins');
 var inputPrice = document.querySelector('#price');
@@ -39,14 +43,14 @@ var getAdList = function (imageNumbers, typeList) { // Функция созда
     var randomTypeValue = randomInteger(0, typeList.length - 1);
     adList.push({
       'author': {'avatar': 'img/avatars/user0' + imageNumbers[i] + '.png'},
-      'offer': {'type': typeList[randomTypeValue].type},
+      'offer': {'type': typeList[randomTypeValue].house},
       'location': {'x': locationX, 'y': locationY}
     });
   }
   return adList;
 };
 
-var adList = getAdList(avatarNumbers, placeTypeMinPrice);
+var adList = getAdList(avatarNumbers, PLACE_TYPE);
 
 var renderPin = function (dataList, i) { // функция создания метки на основе шаблона и заполнения ее данными
   var pinTamplate = document.querySelector('#pin').content.querySelector('.map__pin');
@@ -54,7 +58,7 @@ var renderPin = function (dataList, i) { // функция создания ме
   pinElement.style.left = dataList[i].location.x - 25 + 'px';
   pinElement.style.top = dataList[i].location.y - 70 + 'px';
   pinElement.querySelector('img').src = dataList[i].author.avatar;
-  pinElement.querySelector('img').alt = dataList[i].offer.type;
+  pinElement.querySelector('img').alt = dataList[i].offer.house;
   return pinElement;
 };
 
@@ -66,11 +70,11 @@ var getPinsFragment = function (dataList) { // функция создания �
   return pinsFragment;
 };
 
-var getMinPrice = function (houseType, typeMinPriceList) { // функция получения минимальной цены, в зависимости от типа жилья
+var getMinPrice = function (house, placeType) { // функция получения минимальной цены, в зависимости от типа жилья
   var minPrice;
-  for (var i = 0; i < typeMinPriceList.length; i++) {
-    if (houseType === typeMinPriceList[i].type) {
-      minPrice = typeMinPriceList[i].minPrice;
+  for (var i = 0; i < placeType.length; i++) {
+    if (house === placeType[i].house) {
+      minPrice = placeType[i].minPrice;
     }
   }
   return minPrice;
@@ -116,16 +120,16 @@ mapPinMain.addEventListener('mousedown', function (evt) { // отслежива�
       y: moveEvt.clientY
     };
     mapPinMain.style.top = (mapPinMain.offsetTop - shift.y) + 'px';
-    if (parseInt(mapPinMain.style.top, 10) <= (130 - MAP_PIN_MAIN_HEIGHT)) { // условие ограничивающее поле перемещения
-      mapPinMain.style.top = (130 - MAP_PIN_MAIN_HEIGHT) + 'px';
-    } else if (parseInt(mapPinMain.style.top, 10) >= 630) {
-      mapPinMain.style.top = 630 + 'px';
+    if (parseInt(mapPinMain.style.top, 10) <= (Y_TOP_BORDER - MAP_PIN_MAIN_HEIGHT)) { // условие ограничивающее поле перемещения
+      mapPinMain.style.top = (Y_TOP_BORDER - MAP_PIN_MAIN_HEIGHT) + 'px';
+    } else if (parseInt(mapPinMain.style.top, 10) >= Y_BOTTOM_BORDER) {
+      mapPinMain.style.top = Y_BOTTOM_BORDER + 'px';
     }
     mapPinMain.style.left = (mapPinMain.offsetLeft - shift.x) + 'px';
-    if (parseInt(mapPinMain.style.left, 10) <= (0 - (MAP_PIN_MAIN_WIDTH / 2))) { // условие ограничивающее поле перемещения
-      mapPinMain.style.left = (0 - (MAP_PIN_MAIN_WIDTH / 2)) + 'px';
-    } else if (parseInt(mapPinMain.style.left, 10) >= 1200 - (MAP_PIN_MAIN_WIDTH / 2)) {
-      mapPinMain.style.left = (1200 - (MAP_PIN_MAIN_WIDTH / 2)) + 'px';
+    if (parseInt(mapPinMain.style.left, 10) <= (X_LEFT_BORDER - (MAP_PIN_MAIN_WIDTH / 2))) { // условие ограничивающее поле перемещения
+      mapPinMain.style.left = (X_LEFT_BORDER - (MAP_PIN_MAIN_WIDTH / 2)) + 'px';
+    } else if (parseInt(mapPinMain.style.left, 10) >= X_RIGHT_BORDER - (MAP_PIN_MAIN_WIDTH / 2)) {
+      mapPinMain.style.left = (X_RIGHT_BORDER - (MAP_PIN_MAIN_WIDTH / 2)) + 'px';
     }
 
     inputAddress.setAttribute('value', (parseInt(mapPinMain.style.left, 10) + parseInt((MAP_PIN_MAIN_WIDTH / 2), 10)) + ', ' + (parseInt(mapPinMain.style.top, 10) + MAP_PIN_MAIN_HEIGHT)); // внесение координат конца метки в поле адреса
@@ -141,8 +145,8 @@ mapPinMain.addEventListener('mousedown', function (evt) { // отслежива�
 });
 
 fieldType.addEventListener('change', function () { // изменить тип жилья
-  inputPrice.min = getMinPrice(fieldType.value, placeTypeMinPrice);
-  inputPrice.placeholder = getMinPrice(fieldType.value, placeTypeMinPrice);
+  inputPrice.min = getMinPrice(fieldType.value, PLACE_TYPE);
+  inputPrice.placeholder = getMinPrice(fieldType.value, PLACE_TYPE);
 });
 
 fieldTimeIn.addEventListener('change', function (evt) { // обработчик измененения времени въезда, изменяющий время выезда
