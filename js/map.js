@@ -14,6 +14,17 @@
   var fieldsetList = document.querySelectorAll('fieldset');
   var pinList = document.querySelector('.map__pins');
 
+  var renderPins = function (data) {
+    pinList.appendChild(window.pins.getPinsFragment(window.pins.getPinList(data)));
+  };
+
+  var getErrorBlock = function () {
+    var mainBlock = document.querySelector('main');
+    var errorTamplate = document.querySelector('#error').content.querySelector('.error__message');
+    var errorBlock = errorTamplate.cloneNode(true);
+    mainBlock.appendChild(errorBlock);
+  };
+
   var makeFieldsetAnabled = function (elementList) { // функция удаления элементам из коллекции атрибута disabled
     for (var i = 0; i < elementList.length; i++) {
       elementList[i].removeAttribute('disabled', 'disabled');
@@ -29,8 +40,8 @@
   mapPinMain.addEventListener('mousedown', function (evt) { // отслеживание нажатия кнопки мыши
     evt.preventDefault();
 
-    if (mapBlock.classList.contains('map--faded')) { // условие ограничивающее повление случайный меток при каждом нажатии
-      pinList.appendChild(window.pins.getPinsFragment(window.pins.adList)); // добавление созданного фрагмента в разметку
+    if (mapBlock.classList.contains('map--faded')) { // условие ограничивающее повление меток при каждом нажатии
+      window.load(renderPins, getErrorBlock); // добавление созданного фрагмента в разметку
     }
 
     mapBlock.classList.remove('map--faded');
