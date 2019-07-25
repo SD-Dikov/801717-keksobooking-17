@@ -6,6 +6,7 @@
   var Y_BOTTOM_BORDER = 630;
   var X_LEFT_BORDER = 0;
   var X_RIGHT_BORDER = 1200;
+  var dataList = [];
   var mapPinMain = document.querySelector('.map__pin--main');
   var mapFilters = document.querySelector('.map__filters');
   var inputAddress = document.querySelector('#address');
@@ -14,10 +15,12 @@
   var fieldsetList = document.querySelectorAll('fieldset');
   var pinList = document.querySelector('.map__pins');
   var housingTypeFilter = document.querySelector('#housing-type');
-  var housingPriceFilter = document.querySelector('#housing-price');
 
   var renderPins = function (data) {
     pinList.appendChild(window.pins.getPinsFragment(window.pins.getPinList(data)));
+    if (dataList.length < 1) {
+      dataList = data;
+    }
   };
 
   var getErrorBlock = function () {
@@ -32,20 +35,16 @@
       elementList[i].removeAttribute('disabled', 'disabled');
     }
   };
-  var onChangeFilterValue = function (filterName) {
-    filterName.addEventListener('change', function () {
-      var delPins = pinList.querySelectorAll('.map__pin');
-      for (var i = 0; i < delPins.length; i++) {
-        if (!delPins[i].classList.contains('map__pin--main')) {
-          pinList.removeChild(delPins[i]);
-        }
-      }
-      window.load(renderPins, getErrorBlock);
-    });
-  };
 
-  onChangeFilterValue(housingTypeFilter);
-  onChangeFilterValue(housingPriceFilter);
+  housingTypeFilter.addEventListener('change', function () {
+    var delPins = pinList.querySelectorAll('.map__pin');
+    for (var i = 0; i < delPins.length; i++) {
+      if (!delPins[i].classList.contains('map__pin--main')) {
+        pinList.removeChild(delPins[i]);
+      }
+    }
+    renderPins(dataList);
+  });
 
   inputAddress.setAttribute('value', (parseInt(mapPinMain.style.left, 10) + parseInt((MAP_PIN_MAIN_WIDTH / 2), 10)) + ', ' + (parseInt(mapPinMain.style.top, 10) + MAP_PIN_MAIN_HEIGHT)); // внесение координат конца метки в поле адреса
 
