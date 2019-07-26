@@ -11,33 +11,36 @@
   window.pins = {
 
     getPinList: function (dataList) { // функция создания метки на основе шаблона и заполнения ее данными
+      var filteredDataList;
       if (housingTypeFilter.value !== 'any') {
-        dataList = dataList.filter(function (it) {
+        filteredDataList = dataList.filter(function (it) {
           return it.offer.type === housingTypeFilter.value;
         });
+      } else {
+        filteredDataList = dataList;
       }
       var pinElements = [];
-      for (var i = 0; i < dataList.length; i++) {
+      for (var i = 0; i < filteredDataList.length; i++) {
         var pinTamplate = document.querySelector('#pin').content.querySelector('.map__pin');
         var pinElement = pinTamplate.cloneNode(true);
-        pinElement.style.left = dataList[i].location.x - (PinSize.X / 2) + 'px';
-        pinElement.style.top = dataList[i].location.y - PinSize.Y + 'px';
-        pinElement.querySelector('img').src = dataList[i].author.avatar;
-        pinElement.querySelector('img').alt = dataList[i].offer.title;
+        pinElement.style.left = filteredDataList[i].location.x - (PinSize.X / 2) + 'px';
+        pinElement.style.top = filteredDataList[i].location.y - PinSize.Y + 'px';
+        pinElement.querySelector('img').src = filteredDataList[i].author.avatar;
+        pinElement.querySelector('img').alt = filteredDataList[i].offer.title;
         pinElements.push(pinElement);
       }
       return pinElements;
     },
     getPinsFragment: function (pinsList) { // функция создания фрагмента, состоящего из заполненных данными шаблонов меток
       var pinsFragment = document.createDocumentFragment();
-      var fivePins;
+      var pinsOnMap;
       if (pinsList.length < PINS_QUANTITY) {
-        fivePins = pinsList.slice();
+        pinsOnMap = pinsList.slice();
       } else {
-        fivePins = pinsList.slice(5);
+        pinsOnMap = pinsList.slice(PINS_QUANTITY);
       }
-      for (var i = 0; i < fivePins.length; i++) { // цикл, на каждой итерации которого, вызывается функция создания метки на основе шаблона и заполнения ее данными, количество циклов ограниченно длиной массива с данными
-        pinsFragment.appendChild(fivePins[i]);
+      for (var i = 0; i < pinsOnMap.length; i++) { // цикл, на каждой итерации которого, вызывается функция создания метки на основе шаблона и заполнения ее данными, количество циклов ограниченно длиной массива с данными
+        pinsFragment.appendChild(pinsOnMap[i]);
       }
       return pinsFragment;
     }
