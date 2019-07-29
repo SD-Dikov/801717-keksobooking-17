@@ -8,6 +8,7 @@
   var X_RIGHT_BORDER = 1200;
   var dataList = [];
   var mapPinMain = document.querySelector('.map__pin--main');
+  var mapPins = document.querySelectorAll('.map__pin');
   var mapFilters = document.querySelector('.map__filters');
   var inputAddress = document.querySelector('#address');
   var mapBlock = document.querySelector('.map');
@@ -18,9 +19,16 @@
 
   var renderPins = function (data) {
     pinList.appendChild(window.pins.getPinsFragment(window.pins.getPinList(data)));
-    if (dataList.length < 1) {
-      dataList = data;
-    }
+  };
+
+  var onSuccess = function (data) {
+    renderPins(data);
+    dataList = data;
+    renderCard(dataList);
+  };
+
+  var renderCard = function (data) {
+    mapBlock.appendChild(window.cards.getCardsFragment(window.cards.getCardElement(data[0])));
   };
 
   var getErrorBlock = function () {
@@ -37,10 +45,9 @@
   };
 
   housingTypeFilter.addEventListener('change', function () {
-    var delPins = pinList.querySelectorAll('.map__pin');
-    for (var i = 0; i < delPins.length; i++) {
-      if (!delPins[i].classList.contains('map__pin--main')) {
-        pinList.removeChild(delPins[i]);
+    for (var i = 0; i < mapPins.length; i++) {
+      if (!mapPins[i].classList.contains('map__pin--main')) {
+        pinList.removeChild(mapPins[i]);
       }
     }
     renderPins(dataList);
@@ -54,7 +61,7 @@
     evt.preventDefault();
 
     if (mapBlock.classList.contains('map--faded')) { // условие ограничивающее повление меток при каждом нажатии
-      window.load(renderPins, getErrorBlock); // добавление созданного фрагмента в разметку
+      window.load(onSuccess, getErrorBlock); // добавление созданного фрагмента в разметку
     }
 
     mapBlock.classList.remove('map--faded');
@@ -103,4 +110,5 @@
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
+
 })();
