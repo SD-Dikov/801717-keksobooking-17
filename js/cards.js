@@ -14,7 +14,6 @@
       var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
       var cardPhotoTamplate = document.querySelector('#card').content.querySelector('.popup__photo');
       var cardElement = cardTemplate.cloneNode(true);
-      var cardPhotoElement = cardPhotoTamplate.cloneNode(true);
       cardElement.querySelector('.popup__avatar').src = dataObject.author.avatar;
       cardElement.querySelector('.popup__title').textContent = dataObject.offer.title;
       cardElement.querySelector('.popup__text--address').textContent = dataObject.offer.address;
@@ -40,8 +39,9 @@
       cardElement.querySelector('.popup__photos').removeChild(cardElement.querySelector('.popup__photo'));
 
       dataObject.offer.photos.forEach(function (it) { // добавления фото на основе шаблона и данных (Не могу понять, почему добавляется только одино фото)
-        cardPhotoElement.src = it;
-        cardElement.querySelector('.popup__photos').appendChild(cardPhotoElement);
+        var photoURL = cardPhotoTamplate.cloneNode(true);
+        photoURL.src = it;
+        cardElement.querySelector('.popup__photos').appendChild(photoURL);
       });
 
       return cardElement;

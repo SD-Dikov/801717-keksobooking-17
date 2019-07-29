@@ -24,6 +24,7 @@
   var onSuccess = function (data) {
     renderPins(data);
     dataList = data;
+    renderCard(dataList);
   };
 
   var renderCard = function (data) {
@@ -61,9 +62,6 @@
 
     if (mapBlock.classList.contains('map--faded')) { // условие ограничивающее повление меток при каждом нажатии
       window.load(onSuccess, getErrorBlock); // добавление созданного фрагмента в разметку
-      // ------
-      renderCard(dataList); // массив не успевает получить данные и функция срабатывает со второго раза, но в дальнейшем эта  функция будет вызываться по щелчку по пинам
-      // ------
     }
 
     mapBlock.classList.remove('map--faded');
