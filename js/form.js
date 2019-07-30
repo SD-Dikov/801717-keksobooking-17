@@ -7,6 +7,9 @@
   var fieldTimeOut = document.querySelector('#timeout');
   var fieldType = document.querySelector('#type');
   var inputPrice = document.querySelector('#price');
+  var inputRoomNumber = document.querySelector('#room_number');
+  var inputCapacity = document.querySelector('#capacity');
+  var inputCapacityOptionList = inputCapacity.querySelectorAll('option');
 
   var makeFieldsetDisabled = function (elementList) { // функция добавления элементам из коллекции атрибута disabled
     for (var i = 0; i < elementList.length; i++) {
@@ -32,6 +35,12 @@
     return minPrice;
   };
 
+  var removeDisabled = function (node) {
+    if (node.hasAttribute('disabled')) {
+      node.removeAttribute('disabled');
+    }
+  };
+
   fieldType.addEventListener('change', function () { // изменить тип жилья
     inputPrice.min = getMinPrice(fieldType.value, window.util.PLACE_TYPE);
     inputPrice.placeholder = getMinPrice(fieldType.value, window.util.PLACE_TYPE);
@@ -44,4 +53,49 @@
     setTime(evt);
   });
 
+  inputRoomNumber.addEventListener('change', function () {
+    if (inputRoomNumber.value === '1') {
+      inputCapacityOptionList.forEach(function (it) {
+        if (it.value === '1') {
+          removeDisabled(it);
+          it.selected = true;
+        } else {
+          it.disabled = true;
+        }
+      });
+    } else if (inputRoomNumber.value === '2') {
+      inputCapacityOptionList.forEach(function (it) {
+        if (it.value === '1') {
+          removeDisabled(it);
+        } else if (it.value === '2') {
+          removeDisabled(it);
+          it.selected = true;
+        } else {
+          it.disabled = true;
+        }
+      });
+    } else if (inputRoomNumber.value === '3') {
+      inputCapacityOptionList.forEach(function (it) {
+        if (it.value === '1') {
+          removeDisabled(it);
+        } else if (it.value === '2') {
+          removeDisabled(it);
+        } else if (it.value === '3') {
+          removeDisabled(it);
+          it.selected = true;
+        } else {
+          it.disabled = true;
+        }
+      });
+    } else if (inputRoomNumber.value === '100') {
+      inputCapacityOptionList.forEach(function (it) {
+        if (it.value === '0') {
+          removeDisabled(it);
+          it.selected = true;
+        } else {
+          it.disabled = true;
+        }
+      });
+    }
+  });
 })();
