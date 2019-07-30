@@ -15,6 +15,19 @@
   var fieldsetList = document.querySelectorAll('fieldset');
   var pinList = document.querySelector('.map__pins');
   var housingTypeFilter = document.querySelector('#housing-type');
+  var housingPriceFilter = document.querySelector('#housing-price');
+  var housingRoomsFilter = document.querySelector('#housing-rooms');
+  var housingGuestsFilter = document.querySelector('#housing-guests');
+  var housingFeaturesFilter = document.querySelector('#housing-features');
+
+  housingFeaturesFilter.addEventListener('change', function () {
+    housingFeaturesFilter.querySelectorAll('input').forEach(function (it) {
+      if (it.checked) {
+        console.log(it.value);
+      }
+    });
+  });
+
 
   var renderPins = function (data) {
     pinList.appendChild(window.pins.getPinsFragment(window.pins.getPinList(data)));
@@ -32,7 +45,6 @@
 
   var openPopup = function () {
     mapBlock.addEventListener('click', function (evt) {
-      var mapBlockChildren = mapBlock.children;
       var target = evt.target;
       while (!target.classList.contains('map')) {
         if (target.classList.contains('popup__close')) {
@@ -40,12 +52,9 @@
           break;
         }
         if (target.classList.contains('map__pin') && !target.classList.contains('map__pin--main')) {
-          for (var i = 0; i < mapBlockChildren.length; i++) {
-            if (mapBlockChildren[i].classList.contains('map__card')) {
-              closePopup();
-            }
-          }
+          closeAllPopup();
           renderCard(dataList, target.name);
+          target.classList.add('map__pin--active');
           document.addEventListener('keydown', onEscClosePopup);
           break;
         }
@@ -56,6 +65,21 @@
 
   var closePopup = function () {
     mapBlock.removeChild(document.querySelector('.map__card'));
+    var pinsOnMap = document.querySelectorAll('.map__pin');
+    pinsOnMap.forEach(function (it) {
+      if (it.classList.contains('map__pin--active')) {
+        it.classList.remove('map__pin--active');
+      }
+    });
+  };
+
+  var closeAllPopup = function () {
+    var mapBlockChildren = mapBlock.children;
+    for (var i = 0; i < mapBlockChildren.length; i++) {
+      if (mapBlockChildren[i].classList.contains('map__card')) {
+        closePopup();
+      }
+    }
   };
 
   var onEscClosePopup = function (evt) {
@@ -70,7 +94,8 @@
     openPopup();
   };
 
-  housingTypeFilter.addEventListener('change', function () {
+  var onChangeFilter = function () {
+    closeAllPopup();
     var delPins = document.querySelectorAll('.map__pin');
     for (var i = 0; i < delPins.length; i++) {
       if (!delPins[i].classList.contains('map__pin--main')) {
@@ -78,7 +103,13 @@
       }
     }
     renderPins(dataList);
-  });
+  };
+
+  housingTypeFilter.addEventListener('change', onChangeFilter);
+  housingPriceFilter.addEventListener('change', onChangeFilter);
+  housingRoomsFilter.addEventListener('change', onChangeFilter);
+  housingGuestsFilter.addEventListener('change', onChangeFilter);
+
 
   inputAddress.setAttribute('value', (parseInt(mapPinMain.style.left, 10) + parseInt((MAP_PIN_MAIN_WIDTH / 2), 10)) + ', ' + (parseInt(mapPinMain.style.top, 10) + MAP_PIN_MAIN_HEIGHT)); // внесение координат конца метки в поле адреса
 

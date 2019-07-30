@@ -7,6 +7,10 @@
   };
   var PINS_QUANTITY = 5;
   var housingTypeFilter = document.querySelector('#housing-type');
+  var housingPriceFilter = document.querySelector('#housing-price');
+  var housingRoomsFilter = document.querySelector('#housing-rooms');
+  var housingGuestsFilter = document.querySelector('#housing-guests');
+
 
   window.pins = {
 
@@ -22,6 +26,35 @@
         });
       } else {
         filteredDataList = numberedDataList;
+      }
+      if (housingPriceFilter.value !== 'any') {
+        filteredDataList = filteredDataList.filter(function (it) {
+          var filteredElements;
+          switch (housingPriceFilter.value) {
+            case 'low':
+              filteredElements = it.offer.price < 10000;
+              break;
+            case 'middle':
+              filteredElements = it.offer.price > 10000 && it.offer.price < 50000;
+              break;
+            case 'high':
+              filteredElements = it.offer.price > 50000;
+              break;
+            default:
+              filteredElements = it;
+          }
+          return filteredElements;
+        });
+      }
+      if (housingRoomsFilter.value !== 'any') {
+        filteredDataList = filteredDataList.filter(function (it) {
+          return it.offer.rooms === parseInt(housingRoomsFilter.value, 10);
+        });
+      }
+      if (housingGuestsFilter.value !== 'any') {
+        filteredDataList = filteredDataList.filter(function (it) {
+          return it.offer.guests === parseInt(housingGuestsFilter.value, 10);
+        });
       }
       var pinElements = [];
       for (var i = 0; i < filteredDataList.length; i++) {
