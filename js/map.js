@@ -67,8 +67,9 @@
 
   var onEscClosePopup = function (evt) {
     evt.preventDefault();
-    window.util.isEscEvent(evt, closePopup);
-    document.removeEventListener('keydown', onEscClosePopup);
+    if (evt.keyCode === 27) {
+      closePopup();
+    }
   };
 
   var onSuccess = function (data) {
@@ -78,7 +79,7 @@
   };
 
   housingTypeFilter.addEventListener('change', function () {
-    var delPins = document.querySelectorAll('..map__pin:not(.map__pin--main)');
+    var delPins = document.querySelectorAll('.map__pin:not(.map__pin--main)');
     for (var i = 0; i < delPins.length; i++) {
       pinList.removeChild(delPins[i]);
     }
