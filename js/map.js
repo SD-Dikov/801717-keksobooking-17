@@ -78,11 +78,9 @@
   };
 
   housingTypeFilter.addEventListener('change', function () {
-    var delPins = document.querySelectorAll('.map__pin');
+    var delPins = document.querySelectorAll('..map__pin:not(.map__pin--main)');
     for (var i = 0; i < delPins.length; i++) {
-      if (!delPins[i].classList.contains('map__pin--main')) {
-        pinList.removeChild(delPins[i]);
-      }
+      pinList.removeChild(delPins[i]);
     }
     renderPins(dataList);
   });
