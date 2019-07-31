@@ -1,6 +1,18 @@
 'use strict';
 
 (function () {
+  var RoomNumber = {
+    ONE_ROOM: '1',
+    TWO_ROOMS: '2',
+    THREE_ROOMS: '3',
+    HUNDRED_ROOMS: '100'
+  };
+  var PersonNumber = {
+    ZERO_PERSON: '0',
+    ONE_PERSON: '1',
+    TWO_PERSONS: '2',
+    THREE_PERSONS: '3'
+  };
   var MAP_PIN_MAIN_WIDTH = 66;
   var MAP_PIN_MAIN_HEIGHT = 80;
   var adForm = document.querySelector('.ad-form');
@@ -9,9 +21,9 @@
   var fieldTimeOut = document.querySelector('#timeout');
   var fieldType = document.querySelector('#type');
   var inputPrice = document.querySelector('#price');
-  var inputRoomNumber = document.querySelector('#room_number');
-  var inputCapacity = document.querySelector('#capacity');
-  var inputCapacityOptionList = inputCapacity.querySelectorAll('option');
+  var fieldRoomNumber = document.querySelector('#room_number');
+  var fieldCapacity = document.querySelector('#capacity');
+  var capacityVariantList = fieldCapacity.querySelectorAll('option');
   var mapFilters = document.querySelector('.map__filters');
   var mapBlock = document.querySelector('.map');
   var pinList = document.querySelector('.map__pins');
@@ -49,7 +61,9 @@
     });
 
     var onEscCloseSuccessBlock = function (evt) {
-      window.util.isEscEvent(evt, removeSuccessBlock);
+      if (evt.keyCode === 27) {
+        removeSuccessBlock();
+      }
       document.removeEventListener('keydown', onEscCloseSuccessBlock);
     };
     document.addEventListener('keydown', onEscCloseSuccessBlock); // Не могу понять, почему не срабатывает ESC
@@ -71,10 +85,12 @@
     return minPrice;
   };
 
-  var removeDisabled = function (node) {
-    if (node.hasAttribute('disabled')) {
-      node.removeAttribute('disabled');
-    }
+  var removeDisabled = function (nodeList) {
+    nodeList.forEach(function (it) {
+      if (it.hasAttribute('disabled')) {
+        it.removeAttribute('disabled');
+      }
+    });
   };
 
   var getDefaultView = function () {
@@ -102,6 +118,52 @@
     inputAddress.setAttribute('value', (parseInt(mapPinMain.style.left, 10) + parseInt((MAP_PIN_MAIN_WIDTH / 2), 10)) + ', ' + (parseInt(mapPinMain.style.top, 10) + MAP_PIN_MAIN_HEIGHT));
   };
 
+  var setPersonNumber = function () {
+    fieldRoomNumber.addEventListener('change', function () {
+      removeDisabled(capacityVariantList);
+      switch (fieldRoomNumber.value) {
+        case RoomNumber.ONE_ROOM:
+          capacityVariantList.forEach(function (it) {
+            if (it.value === PersonNumber.ONE_PERSON) {
+              it.selected = true;
+            } else {
+              it.disabled = true;
+            }
+          });
+          break;
+        case RoomNumber.TWO_ROOMS:
+          capacityVariantList.forEach(function (it) {
+            if (it.value === PersonNumber.ONE_PERSON) {
+              it.disabled = false;
+            } else if (it.value === PersonNumber.TWO_PERSONS) {
+              it.selected = true;
+            } else {
+              it.disabled = true;
+            }
+          });
+          break;
+        case RoomNumber.THREE_ROOMS:
+          capacityVariantList.forEach(function (it) {
+            if (it.value === PersonNumber.THREE_PERSONS) {
+              it.selected = true;
+            } else if (it.value === PersonNumber.ZERO_PERSON) {
+              it.disabled = true;
+            }
+          });
+          break;
+        case RoomNumber.HUNDRED_ROOMS:
+          capacityVariantList.forEach(function (it) {
+            if (it.value === PersonNumber.ZERO_PERSON) {
+              it.selected = true;
+            } else {
+              it.disabled = true;
+            }
+          });
+          break;
+      }
+    });
+  };
+
   makeFieldsetDisabled(fieldsetList); // блокировка всех fieldset внутри формы ad-form
 
   resetButton.addEventListener('click', function (evt) {
@@ -121,51 +183,7 @@
     setTime(evt);
   });
 
-  inputRoomNumber.addEventListener('change', function () {
-    if (inputRoomNumber.value === '1') {
-      inputCapacityOptionList.forEach(function (it) {
-        if (it.value === '1') {
-          removeDisabled(it);
-          it.selected = true;
-        } else {
-          it.disabled = true;
-        }
-      });
-    } else if (inputRoomNumber.value === '2') {
-      inputCapacityOptionList.forEach(function (it) {
-        if (it.value === '1') {
-          removeDisabled(it);
-        } else if (it.value === '2') {
-          removeDisabled(it);
-          it.selected = true;
-        } else {
-          it.disabled = true;
-        }
-      });
-    } else if (inputRoomNumber.value === '3') {
-      inputCapacityOptionList.forEach(function (it) {
-        if (it.value === '1') {
-          removeDisabled(it);
-        } else if (it.value === '2') {
-          removeDisabled(it);
-        } else if (it.value === '3') {
-          removeDisabled(it);
-          it.selected = true;
-        } else {
-          it.disabled = true;
-        }
-      });
-    } else if (inputRoomNumber.value === '100') {
-      inputCapacityOptionList.forEach(function (it) {
-        if (it.value === '0') {
-          removeDisabled(it);
-          it.selected = true;
-        } else {
-          it.disabled = true;
-        }
-      });
-    }
-  });
+  setPersonNumber();
 
   adForm.addEventListener('submit', function (evt) {
     evt.preventDefault();
