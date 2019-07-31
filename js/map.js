@@ -70,6 +70,7 @@
     if (evt.keyCode === 27) {
       closePopup();
     }
+
     document.removeEventListener('keydown', onEscClosePopup);
   };
 
