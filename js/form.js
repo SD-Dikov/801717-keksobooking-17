@@ -13,6 +13,7 @@
     TWO_PERSONS: '2',
     THREE_PERSONS: '3'
   };
+  
   var MAP_PIN_MAIN_WIDTH = 66;
   var MAP_PIN_MAIN_HEIGHT = 80;
   var adForm = document.querySelector('.ad-form');
@@ -117,7 +118,7 @@
     mapPinMain.style.top = mapPinMainDefaultY;
     inputAddress.setAttribute('value', (parseInt(mapPinMain.style.left, 10) + parseInt((MAP_PIN_MAIN_WIDTH / 2), 10)) + ', ' + (parseInt(mapPinMain.style.top, 10) + MAP_PIN_MAIN_HEIGHT));
   };
-
+  
   var setPersonNumber = function () {
     fieldRoomNumber.addEventListener('change', function () {
       removeDisabled(capacityVariantList);
@@ -172,8 +173,8 @@
   });
 
   fieldType.addEventListener('change', function () { // изменить тип жилья
-    inputPrice.min = getMinPrice(fieldType.value, window.util.PLACE_TYPE);
-    inputPrice.placeholder = getMinPrice(fieldType.value, window.util.PLACE_TYPE);
+    fieldPrice.min = getMinPrice(fieldType.value, window.util.PLACE_TYPE);
+    fieldPrice.placeholder = getMinPrice(fieldType.value, window.util.PLACE_TYPE);
   });
 
   fieldTimeIn.addEventListener('change', function (evt) { // обработчик измененения времени въезда, изменяющий время выезда
@@ -189,5 +190,4 @@
     evt.preventDefault();
     window.backend.upLoad(new FormData(adForm), onSuccess, window.util.getErrorBlock);
   });
-
 })();
