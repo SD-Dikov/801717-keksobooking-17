@@ -1,6 +1,18 @@
 'use strict';
 
 (function () {
+  var RoomNumber = {
+    ONE_ROOM: '1',
+    TWO_ROOMS: '2',
+    THREE_ROOMS: '3',
+    HUNDRED_ROOMS: '100'
+  };
+  var PersonNumber = {
+    ZERO_PERSON: '0',
+    ONE_PERSON: '1',
+    TWO_PERSONS: '2',
+    THREE_PERSONS: '3'
+  };
   var MAP_PIN_MAIN_WIDTH = 66;
   var MAP_PIN_MAIN_HEIGHT = 80;
   var adForm = document.querySelector('.ad-form');
@@ -8,17 +20,17 @@
   var fieldTimeIn = document.querySelector('#timein');
   var fieldTimeOut = document.querySelector('#timeout');
   var fieldType = document.querySelector('#type');
-  var inputPrice = document.querySelector('#price');
-  var inputRoomNumber = document.querySelector('#room_number');
-  var inputCapacity = document.querySelector('#capacity');
-  var inputCapacityOptionList = inputCapacity.querySelectorAll('option');
+  var fieldPrice = document.querySelector('#price');
+  var fieldRoomNumber = document.querySelector('#room_number');
+  var fieldCapacity = document.querySelector('#capacity');
+  var capacityVariantList = fieldCapacity.querySelectorAll('option');
   var mapFilters = document.querySelector('.map__filters');
   var mapBlock = document.querySelector('.map');
   var pinList = document.querySelector('.map__pins');
   var mapPinMain = document.querySelector('.map__pin--main');
   var mapPinMainDefaultX = mapPinMain.style.left;
   var mapPinMainDefaultY = mapPinMain.style.top;
-  var inputAddress = document.querySelector('#address');
+  var fieldAddress = document.querySelector('#address');
   var resetButton = document.querySelector('.ad-form__reset');
 
   var makeFieldsetDisabled = function (elementList) { // функция добавления элементам из коллекции атрибута disabled
@@ -49,10 +61,12 @@
     });
 
     var onEscCloseSuccessBlock = function (evt) {
-      window.util.isEscEvent(evt, removeSuccessBlock);
+      if (evt.keyCode === 27) {
+        removeSuccessBlock();
+      }
       document.removeEventListener('keydown', onEscCloseSuccessBlock);
     };
-    document.addEventListener('keydown', onEscCloseSuccessBlock); // Не могу понять, почему не срабатывает ESC
+    document.addEventListener('keydown', onEscCloseSuccessBlock);
   };
 
   var onSuccess = function () {
@@ -61,20 +75,22 @@
   };
 
 
-  var getMinPrice = function (house, placeType) { // функция получения минимальной цены, в зависимости от типа жилья
+  var getMinPrice = function (house, placeTypes) { // функция получения минимальной цены, в зависимости от типа жилья
     var minPrice;
-    for (var i = 0; i < placeType.length; i++) {
-      if (house === placeType[i].house) {
-        minPrice = placeType[i].minPrice;
+    for (var i = 0; i < placeTypes.length; i++) {
+      if (house === placeTypes[i].house) {
+        minPrice = placeTypes[i].minPrice;
       }
     }
     return minPrice;
   };
 
-  var removeDisabled = function (node) {
-    if (node.hasAttribute('disabled')) {
-      node.removeAttribute('disabled');
-    }
+  var removeDisabled = function (nodeList) {
+    nodeList.forEach(function (item) {
+      if (item.hasAttribute('disabled')) {
+        item.removeAttribute('disabled');
+      }
+    });
   };
 
   var getDefaultView = function () {
@@ -85,9 +101,9 @@
     for (var i = 0; i < fieldsetList.length; i++) {
       fieldsetList[i].disabled = true;
     }
-    var mapBlockChildren = mapBlock.children;
-    for (var k = 0; k < mapBlockChildren.length; k++) {
-      if (mapBlockChildren[k].classList.contains('map__card')) {
+    var mapBlockChildrens = mapBlock.children;
+    for (var k = 0; k < mapBlockChildrens.length; k++) {
+      if (mapBlockChildrens[k].classList.contains('map__card')) {
         mapBlock.removeChild(document.querySelector('.map__card'));
       }
     }
@@ -99,7 +115,53 @@
     }
     mapPinMain.style.left = mapPinMainDefaultX;
     mapPinMain.style.top = mapPinMainDefaultY;
-    inputAddress.setAttribute('value', (parseInt(mapPinMain.style.left, 10) + parseInt((MAP_PIN_MAIN_WIDTH / 2), 10)) + ', ' + (parseInt(mapPinMain.style.top, 10) + MAP_PIN_MAIN_HEIGHT));
+    fieldAddress.setAttribute('value', (parseInt(mapPinMain.style.left, 10) + parseInt((MAP_PIN_MAIN_WIDTH / 2), 10)) + ', ' + (parseInt(mapPinMain.style.top, 10) + MAP_PIN_MAIN_HEIGHT));
+  };
+
+  var setPersonNumber = function () {
+    fieldRoomNumber.addEventListener('change', function () {
+      removeDisabled(capacityVariantList);
+      switch (fieldRoomNumber.value) {
+        case RoomNumber.ONE_ROOM:
+          capacityVariantList.forEach(function (item) {
+            if (item.value === PersonNumber.ONE_PERSON) {
+              item.selected = true;
+            } else {
+              item.disabled = true;
+            }
+          });
+          break;
+        case RoomNumber.TWO_ROOMS:
+          capacityVariantList.forEach(function (item) {
+            if (item.value === PersonNumber.ONE_PERSON) {
+              item.disabled = false;
+            } else if (item.value === PersonNumber.TWO_PERSONS) {
+              item.selected = true;
+            } else {
+              item.disabled = true;
+            }
+          });
+          break;
+        case RoomNumber.THREE_ROOMS:
+          capacityVariantList.forEach(function (item) {
+            if (item.value === PersonNumber.THREE_PERSONS) {
+              item.selected = true;
+            } else if (item.value === PersonNumber.ZERO_PERSON) {
+              item.disabled = true;
+            }
+          });
+          break;
+        case RoomNumber.HUNDRED_ROOMS:
+          capacityVariantList.forEach(function (item) {
+            if (item.value === PersonNumber.ZERO_PERSON) {
+              item.selected = true;
+            } else {
+              item.disabled = true;
+            }
+          });
+          break;
+      }
+    });
   };
 
   makeFieldsetDisabled(fieldsetList); // блокировка всех fieldset внутри формы ad-form
@@ -110,8 +172,8 @@
   });
 
   fieldType.addEventListener('change', function () { // изменить тип жилья
-    inputPrice.min = getMinPrice(fieldType.value, window.util.PLACE_TYPE);
-    inputPrice.placeholder = getMinPrice(fieldType.value, window.util.PLACE_TYPE);
+    fieldPrice.min = getMinPrice(fieldType.value, window.util.PLACE_TYPE);
+    fieldPrice.placeholder = getMinPrice(fieldType.value, window.util.PLACE_TYPE);
   });
 
   fieldTimeIn.addEventListener('change', function (evt) { // обработчик измененения времени въезда, изменяющий время выезда
@@ -121,51 +183,7 @@
     setTime(evt);
   });
 
-  inputRoomNumber.addEventListener('change', function () {
-    if (inputRoomNumber.value === '1') {
-      inputCapacityOptionList.forEach(function (it) {
-        if (it.value === '1') {
-          removeDisabled(it);
-          it.selected = true;
-        } else {
-          it.disabled = true;
-        }
-      });
-    } else if (inputRoomNumber.value === '2') {
-      inputCapacityOptionList.forEach(function (it) {
-        if (it.value === '1') {
-          removeDisabled(it);
-        } else if (it.value === '2') {
-          removeDisabled(it);
-          it.selected = true;
-        } else {
-          it.disabled = true;
-        }
-      });
-    } else if (inputRoomNumber.value === '3') {
-      inputCapacityOptionList.forEach(function (it) {
-        if (it.value === '1') {
-          removeDisabled(it);
-        } else if (it.value === '2') {
-          removeDisabled(it);
-        } else if (it.value === '3') {
-          removeDisabled(it);
-          it.selected = true;
-        } else {
-          it.disabled = true;
-        }
-      });
-    } else if (inputRoomNumber.value === '100') {
-      inputCapacityOptionList.forEach(function (it) {
-        if (it.value === '0') {
-          removeDisabled(it);
-          it.selected = true;
-        } else {
-          it.disabled = true;
-        }
-      });
-    }
-  });
+  setPersonNumber();
 
   adForm.addEventListener('submit', function (evt) {
     evt.preventDefault();

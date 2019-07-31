@@ -6,28 +6,17 @@
   var Y_BOTTOM_BORDER = 630;
   var X_LEFT_BORDER = 0;
   var X_RIGHT_BORDER = 1200;
+  var DEBOUNCE_INTERVAL = 500;
   var dataList = [];
   var mapPinMain = document.querySelector('.map__pin--main');
   var mapFilters = document.querySelector('.map__filters');
-  var inputAddress = document.querySelector('#address');
+  var fieldAddress = document.querySelector('#address');
   var mapBlock = document.querySelector('.map');
   var adForm = document.querySelector('.ad-form');
   var fieldsetList = document.querySelectorAll('fieldset');
   var pinList = document.querySelector('.map__pins');
-  var housingTypeFilter = document.querySelector('#housing-type');
-  var housingPriceFilter = document.querySelector('#housing-price');
-  var housingRoomsFilter = document.querySelector('#housing-rooms');
-  var housingGuestsFilter = document.querySelector('#housing-guests');
   var housingFeaturesFilter = document.querySelector('#housing-features');
-
-  housingFeaturesFilter.addEventListener('change', function () {
-    housingFeaturesFilter.querySelectorAll('input').forEach(function (it) {
-      if (it.checked) {
-        console.log(it.value);
-      }
-    });
-  });
-
+  var lastTimeout;
 
   var renderPins = function (data) {
     pinList.appendChild(window.pins.getPinsFragment(window.pins.getPinList(data)));
@@ -37,9 +26,9 @@
     mapBlock.insertBefore(window.cards.getCardsFragment(window.cards.getCardElement(data[index])), document.querySelector('.map__filters-container'));
   };
 
-  var makeFieldsetAnabled = function (elementList) { // функция удаления элементам из коллекции атрибута disabled
-    for (var i = 0; i < elementList.length; i++) {
-      elementList[i].removeAttribute('disabled', 'disabled');
+  var makeFieldsetAnabled = function (elementsList) { // функция удаления элементам из коллекции атрибута disabled
+    for (var i = 0; i < elementsList.length; i++) {
+      elementsList[i].removeAttribute('disabled', 'disabled');
     }
   };
 
@@ -66,9 +55,9 @@
   var closePopup = function () {
     mapBlock.removeChild(document.querySelector('.map__card'));
     var pinsOnMap = document.querySelectorAll('.map__pin');
-    pinsOnMap.forEach(function (it) {
-      if (it.classList.contains('map__pin--active')) {
-        it.classList.remove('map__pin--active');
+    pinsOnMap.forEach(function (item) {
+      if (item.classList.contains('map__pin--active')) {
+        item.classList.remove('map__pin--active');
       }
     });
   };
@@ -84,7 +73,9 @@
 
   var onEscClosePopup = function (evt) {
     evt.preventDefault();
-    window.util.isEscEvent(evt, closePopup);
+    if (evt.keyCode === 27) {
+      closePopup();
+    }
     document.removeEventListener('keydown', onEscClosePopup);
   };
 
@@ -94,24 +85,29 @@
     openPopup();
   };
 
-  var onChangeFilter = function () {
-    closeAllPopup();
-    var delPins = document.querySelectorAll('.map__pin');
-    for (var i = 0; i < delPins.length; i++) {
-      if (!delPins[i].classList.contains('map__pin--main')) {
-        pinList.removeChild(delPins[i]);
-      }
+  var debounce = function (action) {
+    if (lastTimeout) {
+      window.clearTimeout(lastTimeout);
     }
-    renderPins(dataList);
+    lastTimeout = window.setTimeout(action, DEBOUNCE_INTERVAL);
   };
 
-  housingTypeFilter.addEventListener('change', onChangeFilter);
-  housingPriceFilter.addEventListener('change', onChangeFilter);
-  housingRoomsFilter.addEventListener('change', onChangeFilter);
-  housingGuestsFilter.addEventListener('change', onChangeFilter);
+  var onChangeFilter = function () {
+    debounce(function () {
+      closeAllPopup();
+      var delPins = document.querySelectorAll('.map__pin:not(.map__pin--main)');
+      for (var i = 0; i < delPins.length; i++) {
+        pinList.removeChild(delPins[i]);
+      }
+      renderPins(dataList);
+    });
+  };
+
+  mapFilters.addEventListener('change', onChangeFilter);
+  housingFeaturesFilter.addEventListener('change', onChangeFilter);
 
 
-  inputAddress.setAttribute('value', (parseInt(mapPinMain.style.left, 10) + parseInt((MAP_PIN_MAIN_WIDTH / 2), 10)) + ', ' + (parseInt(mapPinMain.style.top, 10) + MAP_PIN_MAIN_HEIGHT)); // внесение координат конца метки в поле адреса
+  fieldAddress.setAttribute('value', (parseInt(mapPinMain.style.left, 10) + parseInt((MAP_PIN_MAIN_WIDTH / 2), 10)) + ', ' + (parseInt(mapPinMain.style.top, 10) + MAP_PIN_MAIN_HEIGHT)); // внесение координат конца метки в поле адреса
 
   mapFilters.classList.add('ad-form--disabled'); // добавление mapFilters класса ad-form--disabled
 
@@ -157,7 +153,7 @@
         mapPinMain.style.left = (X_RIGHT_BORDER - (MAP_PIN_MAIN_WIDTH / 2)) + 'px';
       }
 
-      inputAddress.setAttribute('value', (parseInt(mapPinMain.style.left, 10) + parseInt((MAP_PIN_MAIN_WIDTH / 2), 10)) + ', ' + (parseInt(mapPinMain.style.top, 10) + MAP_PIN_MAIN_HEIGHT)); // внесение координат конца метки в поле адреса
+      fieldAddress.setAttribute('value', (parseInt(mapPinMain.style.left, 10) + parseInt((MAP_PIN_MAIN_WIDTH / 2), 10)) + ', ' + (parseInt(mapPinMain.style.top, 10) + MAP_PIN_MAIN_HEIGHT)); // внесение координат конца метки в поле адреса
     };
     var onMouseUp = function (upEvt) { // отслеживание отпускания кнопки мыши
       upEvt.preventDefault();
