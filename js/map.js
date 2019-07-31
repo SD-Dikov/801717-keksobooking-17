@@ -106,7 +106,6 @@
   mapFilters.addEventListener('change', onChangeFilter);
   housingFeaturesFilter.addEventListener('change', onChangeFilter);
 
-
   fieldAddress.setAttribute('value', (parseInt(mapPinMain.style.left, 10) + parseInt((MAP_PIN_MAIN_WIDTH / 2), 10)) + ', ' + (parseInt(mapPinMain.style.top, 10) + MAP_PIN_MAIN_HEIGHT)); // внесение координат конца метки в поле адреса
 
   mapFilters.classList.add('ad-form--disabled'); // добавление mapFilters класса ad-form--disabled
