@@ -11,13 +11,17 @@
   window.pins = {
 
     getPinList: function (dataList) { // функция создания метки на основе шаблона и заполнения ее данными
+      var numberedDataList = dataList;
+      dataList.forEach(function (it, i) {
+        numberedDataList[i].dataListIndex = i;
+      });
       var filteredDataList;
       if (housingTypeFilter.value !== 'any') {
-        filteredDataList = dataList.filter(function (it) {
+        filteredDataList = numberedDataList.filter(function (it) {
           return it.offer.type === housingTypeFilter.value;
         });
       } else {
-        filteredDataList = dataList;
+        filteredDataList = numberedDataList;
       }
       var pinElements = [];
       for (var i = 0; i < filteredDataList.length; i++) {
@@ -25,6 +29,7 @@
         var pinElement = pinTamplate.cloneNode(true);
         pinElement.style.left = filteredDataList[i].location.x - (PinSize.X / 2) + 'px';
         pinElement.style.top = filteredDataList[i].location.y - PinSize.Y + 'px';
+        pinElement.name = filteredDataList[i].dataListIndex;
         pinElement.querySelector('img').src = filteredDataList[i].author.avatar;
         pinElement.querySelector('img').alt = filteredDataList[i].offer.title;
         pinElements.push(pinElement);
