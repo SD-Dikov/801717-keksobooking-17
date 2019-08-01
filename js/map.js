@@ -24,13 +24,6 @@
     mapBlock.insertBefore(window.cards.getCardsFragment(window.cards.getCardElement(data[index])), document.querySelector('.map__filters-container'));
   };
 
-  var getErrorBlock = function () {
-    var mainBlock = document.querySelector('main');
-    var errorTamplate = document.querySelector('#error').content.querySelector('.error__message');
-    var errorBlock = errorTamplate.cloneNode(true);
-    mainBlock.appendChild(errorBlock);
-  };
-
   var makeFieldsetAnabled = function (elementList) { // функция удаления элементам из коллекции атрибута disabled
     for (var i = 0; i < elementList.length; i++) {
       elementList[i].removeAttribute('disabled', 'disabled');
@@ -70,7 +63,6 @@
     if (evt.keyCode === 27) {
       closePopup();
     }
-
     document.removeEventListener('keydown', onEscClosePopup);
   };
 
@@ -96,7 +88,7 @@
     evt.preventDefault();
 
     if (mapBlock.classList.contains('map--faded')) { // условие ограничивающее повление меток при каждом нажатии
-      window.load(onSuccess, getErrorBlock); // добавление созданного фрагмента в разметку
+      window.backend.onLoad(onSuccess, window.util.getErrorBlock); // добавление созданного фрагмента в разметку
     }
 
     mapBlock.classList.remove('map--faded');
