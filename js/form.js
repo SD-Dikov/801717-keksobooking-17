@@ -107,11 +107,9 @@
         mapBlock.removeChild(document.querySelector('.map__card'));
       }
     }
-    var mapPins = document.querySelectorAll('.map__pin');
+    var mapPins = document.querySelectorAll('.map__pin:not(.map__pin--main)');
     for (var j = 0; j < mapPins.length; j++) {
-      if (!mapPins[j].classList.contains('map__pin--main')) {
-        pinList.removeChild(mapPins[j]);
-      }
+      pinList.removeChild(mapPins[j]);
     }
     mapPinMain.style.left = mapPinMainDefaultX;
     mapPinMain.style.top = mapPinMainDefaultY;

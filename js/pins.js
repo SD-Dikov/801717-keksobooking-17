@@ -15,6 +15,7 @@
   var housingRoomsFilter = document.querySelector('#housing-rooms');
   var housingGuestsFilter = document.querySelector('#housing-guests');
   var housingFeaturesFilter = document.querySelector('#housing-features');
+  var defaultFilterValue = 'any';
 
   window.pins = {
 
@@ -23,15 +24,9 @@
       var numberedDataList = dataList;
       var filteredDataList = numberedDataList;
 
-      var filtrateByFeatures = function (filterName) {
+      var filterFeatures = function (filterName) {
         filteredDataList = filteredDataList.filter(function (item) {
-          var filteredElements;
-          for (var i = 0; i < item.offer.features.length; i++) {
-            if (item.offer.features[i] === filterName.value) {
-              filteredElements = item;
-            }
-          }
-          return filteredElements;
+          return item.offer.features.includes(filterName.value);
         });
         return filteredDataList;
       };
@@ -40,12 +35,12 @@
         numberedDataList[i].dataListIndex = i;
       });
 
-      if (housingTypeFilter.value !== 'any') {
+      if (housingTypeFilter.value !== defaultFilterValue) {
         filteredDataList = numberedDataList.filter(function (item) {
           return item.offer.type === housingTypeFilter.value;
         });
       }
-      if (housingPriceFilter.value !== 'any') {
+      if (housingPriceFilter.value !== defaultFilterValue) {
         filteredDataList = filteredDataList.filter(function (item) {
           var filteredElements;
           switch (housingPriceFilter.value) {
@@ -64,19 +59,19 @@
           return filteredElements;
         });
       }
-      if (housingRoomsFilter.value !== 'any') {
+      if (housingRoomsFilter.value !== defaultFilterValue) {
         filteredDataList = filteredDataList.filter(function (item) {
           return item.offer.rooms === parseInt(housingRoomsFilter.value, 10);
         });
       }
-      if (housingGuestsFilter.value !== 'any') {
+      if (housingGuestsFilter.value !== defaultFilterValue) {
         filteredDataList = filteredDataList.filter(function (item) {
           return item.offer.guests === parseInt(housingGuestsFilter.value, 10);
         });
       }
       if (checkedFeaturesList.length > 0) {
         checkedFeaturesList.forEach(function (item) {
-          filtrateByFeatures(item);
+          filterFeatures(item);
         });
       }
 
