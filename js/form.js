@@ -115,7 +115,6 @@
     mapPinMain.style.top = mapPinMainDefaultY;
     fieldAddress.setAttribute('value', (parseInt(mapPinMain.style.left, 10) + parseInt((MAP_PIN_MAIN_WIDTH / 2), 10)) + ', ' + (parseInt(mapPinMain.style.top, 10) + MAP_PIN_MAIN_HEIGHT));
   };
-
   var setPersonNumber = function () {
     fieldRoomNumber.addEventListener('change', function () {
       removeDisabled(capacityVariantList);
@@ -187,5 +186,4 @@
     evt.preventDefault();
     window.backend.upLoad(new FormData(adForm), onSuccess, window.util.getErrorBlock);
   });
-
 })();
