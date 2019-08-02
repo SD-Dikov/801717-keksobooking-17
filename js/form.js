@@ -13,6 +13,7 @@
     TWO_PERSONS: '2',
     THREE_PERSONS: '3'
   };
+
   var MAP_PIN_MAIN_WIDTH = 66;
   var MAP_PIN_MAIN_HEIGHT = 80;
   var adForm = document.querySelector('.ad-form');
@@ -20,7 +21,7 @@
   var fieldTimeIn = document.querySelector('#timein');
   var fieldTimeOut = document.querySelector('#timeout');
   var fieldType = document.querySelector('#type');
-  var fieldPrice = document.querySelector('#price');
+  var inputPrice = document.querySelector('#price');
   var fieldRoomNumber = document.querySelector('#room_number');
   var fieldCapacity = document.querySelector('#capacity');
   var capacityVariantList = fieldCapacity.querySelectorAll('option');
@@ -73,7 +74,6 @@
     getSuccessBlock();
   };
 
-
   var getMinPrice = function (house, placeTypes) { // функция получения минимальной цены, в зависимости от типа жилья
     var minPrice;
     for (var i = 0; i < placeTypes.length; i++) {
@@ -100,6 +100,7 @@
     for (var i = 0; i < fieldsetList.length; i++) {
       fieldsetList[i].disabled = true;
     }
+
     var mapBlockChildrens = mapBlock.children;
     for (var k = 0; k < mapBlockChildrens.length; k++) {
       if (mapBlockChildrens[k].classList.contains('map__card')) {
@@ -114,6 +115,7 @@
     mapPinMain.style.top = mapPinMainDefaultY;
     fieldAddress.setAttribute('value', (parseInt(mapPinMain.style.left, 10) + parseInt((MAP_PIN_MAIN_WIDTH / 2), 10)) + ', ' + (parseInt(mapPinMain.style.top, 10) + MAP_PIN_MAIN_HEIGHT));
   };
+
   var setPersonNumber = function () {
     fieldRoomNumber.addEventListener('change', function () {
       removeDisabled(capacityVariantList);
