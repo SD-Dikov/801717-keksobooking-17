@@ -13,7 +13,7 @@
     TWO_PERSONS: '2',
     THREE_PERSONS: '3'
   };
-  
+
   var MAP_PIN_MAIN_WIDTH = 66;
   var MAP_PIN_MAIN_HEIGHT = 80;
   var adForm = document.querySelector('.ad-form');
@@ -21,7 +21,7 @@
   var fieldTimeIn = document.querySelector('#timein');
   var fieldTimeOut = document.querySelector('#timeout');
   var fieldType = document.querySelector('#type');
-  var inputPrice = document.querySelector('#price');
+  var fieldPrice = document.querySelector('#price');
   var fieldRoomNumber = document.querySelector('#room_number');
   var fieldCapacity = document.querySelector('#capacity');
   var capacityVariantList = fieldCapacity.querySelectorAll('option');
@@ -31,7 +31,7 @@
   var mapPinMain = document.querySelector('.map__pin--main');
   var mapPinMainDefaultX = mapPinMain.style.left;
   var mapPinMainDefaultY = mapPinMain.style.top;
-  var inputAddress = document.querySelector('#address');
+  var fieldAddress = document.querySelector('#address');
   var resetButton = document.querySelector('.ad-form__reset');
 
   var makeFieldsetDisabled = function (elementList) { // функция добавления элементам из коллекции атрибута disabled
@@ -44,7 +44,6 @@
     var select = evt.target === fieldTimeIn ? fieldTimeOut : fieldTimeIn;
     select.value = evt.target.value;
   };
-
 
   var getSuccessBlock = function () {
     var mainBlock = document.querySelector('main');
@@ -67,7 +66,7 @@
       }
       document.removeEventListener('keydown', onEscCloseSuccessBlock);
     };
-    document.addEventListener('keydown', onEscCloseSuccessBlock); // Не могу понять, почему не срабатывает ESC
+    document.addEventListener('keydown', onEscCloseSuccessBlock);
   };
 
   var onSuccess = function () {
@@ -75,21 +74,20 @@
     getSuccessBlock();
   };
 
-
-  var getMinPrice = function (house, placeType) { // функция получения минимальной цены, в зависимости от типа жилья
+  var getMinPrice = function (house, placeTypes) { // функция получения минимальной цены, в зависимости от типа жилья
     var minPrice;
-    for (var i = 0; i < placeType.length; i++) {
-      if (house === placeType[i].house) {
-        minPrice = placeType[i].minPrice;
+    for (var i = 0; i < placeTypes.length; i++) {
+      if (house === placeTypes[i].house) {
+        minPrice = placeTypes[i].minPrice;
       }
     }
     return minPrice;
   };
 
   var removeDisabled = function (nodeList) {
-    nodeList.forEach(function (it) {
-      if (it.hasAttribute('disabled')) {
-        it.removeAttribute('disabled');
+    nodeList.forEach(function (item) {
+      if (item.hasAttribute('disabled')) {
+        item.removeAttribute('disabled');
       }
     });
   };
@@ -102,62 +100,61 @@
     for (var i = 0; i < fieldsetList.length; i++) {
       fieldsetList[i].disabled = true;
     }
-    var mapBlockChildren = mapBlock.children;
-    for (var k = 0; k < mapBlockChildren.length; k++) {
-      if (mapBlockChildren[k].classList.contains('map__card')) {
+
+    var mapBlockChildrens = mapBlock.children;
+    for (var k = 0; k < mapBlockChildrens.length; k++) {
+      if (mapBlockChildrens[k].classList.contains('map__card')) {
         mapBlock.removeChild(document.querySelector('.map__card'));
       }
     }
-    var mapPins = document.querySelectorAll('.map__pin');
+    var mapPins = document.querySelectorAll('.map__pin:not(.map__pin--main)');
     for (var j = 0; j < mapPins.length; j++) {
-      if (!mapPins[j].classList.contains('map__pin--main')) {
-        pinList.removeChild(mapPins[j]);
-      }
+      pinList.removeChild(mapPins[j]);
     }
     mapPinMain.style.left = mapPinMainDefaultX;
     mapPinMain.style.top = mapPinMainDefaultY;
-    inputAddress.setAttribute('value', (parseInt(mapPinMain.style.left, 10) + parseInt((MAP_PIN_MAIN_WIDTH / 2), 10)) + ', ' + (parseInt(mapPinMain.style.top, 10) + MAP_PIN_MAIN_HEIGHT));
+    fieldAddress.setAttribute('value', (parseInt(mapPinMain.style.left, 10) + parseInt((MAP_PIN_MAIN_WIDTH / 2), 10)) + ', ' + (parseInt(mapPinMain.style.top, 10) + MAP_PIN_MAIN_HEIGHT));
   };
-  
+
   var setPersonNumber = function () {
     fieldRoomNumber.addEventListener('change', function () {
       removeDisabled(capacityVariantList);
       switch (fieldRoomNumber.value) {
         case RoomNumber.ONE_ROOM:
-          capacityVariantList.forEach(function (it) {
-            if (it.value === PersonNumber.ONE_PERSON) {
-              it.selected = true;
+          capacityVariantList.forEach(function (item) {
+            if (item.value === PersonNumber.ONE_PERSON) {
+              item.selected = true;
             } else {
-              it.disabled = true;
+              item.disabled = true;
             }
           });
           break;
         case RoomNumber.TWO_ROOMS:
-          capacityVariantList.forEach(function (it) {
-            if (it.value === PersonNumber.ONE_PERSON) {
-              it.disabled = false;
-            } else if (it.value === PersonNumber.TWO_PERSONS) {
-              it.selected = true;
+          capacityVariantList.forEach(function (item) {
+            if (item.value === PersonNumber.ONE_PERSON) {
+              item.disabled = false;
+            } else if (item.value === PersonNumber.TWO_PERSONS) {
+              item.selected = true;
             } else {
-              it.disabled = true;
+              item.disabled = true;
             }
           });
           break;
         case RoomNumber.THREE_ROOMS:
-          capacityVariantList.forEach(function (it) {
-            if (it.value === PersonNumber.THREE_PERSONS) {
-              it.selected = true;
-            } else if (it.value === PersonNumber.ZERO_PERSON) {
-              it.disabled = true;
+          capacityVariantList.forEach(function (item) {
+            if (item.value === PersonNumber.THREE_PERSONS) {
+              item.selected = true;
+            } else if (item.value === PersonNumber.ZERO_PERSON) {
+              item.disabled = true;
             }
           });
           break;
         case RoomNumber.HUNDRED_ROOMS:
-          capacityVariantList.forEach(function (it) {
-            if (it.value === PersonNumber.ZERO_PERSON) {
-              it.selected = true;
+          capacityVariantList.forEach(function (item) {
+            if (item.value === PersonNumber.ZERO_PERSON) {
+              item.selected = true;
             } else {
-              it.disabled = true;
+              item.disabled = true;
             }
           });
           break;
