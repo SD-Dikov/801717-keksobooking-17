@@ -21,7 +21,7 @@
   var fieldTimeIn = document.querySelector('#timein');
   var fieldTimeOut = document.querySelector('#timeout');
   var fieldType = document.querySelector('#type');
-  var inputPrice = document.querySelector('#price');
+  var fieldPrice = document.querySelector('#price');
   var fieldRoomNumber = document.querySelector('#room_number');
   var fieldCapacity = document.querySelector('#capacity');
   var capacityVariantList = fieldCapacity.querySelectorAll('option');
