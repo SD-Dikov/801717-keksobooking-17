@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-
   var houseTypeDictionary = {
     'flat': 'Квартира',
     'bungalo': 'Бунгало',
@@ -22,7 +21,6 @@
       cardElement.querySelector('.popup__text--capacity').textContent = dataObject.offer.rooms + ' комнаты для ' + dataObject.offer.guests + ' гостей';
       cardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + dataObject.offer.checkin + ', выезд до ' + dataObject.offer.checkout;
 
-
       cardElement.querySelectorAll('.popup__feature').forEach(function (item) { // удаление всех пунктов списка из шаблона
         cardElement.querySelector('.popup__features').removeChild(item);
       });
@@ -33,7 +31,6 @@
         popupFeature.classList.add('popup__feature--' + item);
         cardElement.querySelector('.popup__features').appendChild(popupFeature);
       });
-
 
       cardElement.querySelector('.popup__description').textContent = dataObject.offer.description;
       cardElement.querySelector('.popup__photos').removeChild(cardElement.querySelector('.popup__photo'));
