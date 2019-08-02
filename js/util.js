@@ -20,7 +20,9 @@
       });
 
       var onEscCloseErrorBlock = function (evt) {
-        window.util.isEscEvent(evt, removeErrorBlock);
+        if (evt.keyCode === 27) {
+          removeErrorBlock();
+        }
         document.removeEventListener('keydown', onEscCloseErrorBlock);
       };
       document.addEventListener('keydown', onEscCloseErrorBlock);

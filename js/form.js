@@ -13,6 +13,7 @@
     TWO_PERSONS: '2',
     THREE_PERSONS: '3'
   };
+
   var MAP_PIN_MAIN_WIDTH = 66;
   var MAP_PIN_MAIN_HEIGHT = 80;
   var adForm = document.querySelector('.ad-form');
