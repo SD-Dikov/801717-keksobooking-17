@@ -44,7 +44,6 @@
     select.value = evt.target.value;
   };
 
-
   var getSuccessBlock = function () {
     var mainBlock = document.querySelector('main');
     var successTamplate = document.querySelector('#success').content.querySelector('.success');
