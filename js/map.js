@@ -26,7 +26,7 @@
     mapBlock.insertBefore(window.cards.getCardsFragment(window.cards.getCardElement(data[index])), document.querySelector('.map__filters-container'));
   };
 
-  var makeFieldsetAnabled = function (elementsList) { // функция удаления элементам из коллекции атрибута disabled
+  var makeFieldsetEnabled = function (elementsList) {
     for (var i = 0; i < elementsList.length; i++) {
       elementsList[i].removeAttribute('disabled', 'disabled');
     }
@@ -41,7 +41,7 @@
           break;
         }
         if (target.classList.contains('map__pin') && !target.classList.contains('map__pin--main')) {
-          closeAllPopup();
+          closePopup();
           renderCard(dataList, target.name);
           target.classList.add('map__pin--active');
           document.addEventListener('keydown', onEscClosePopup);
@@ -53,21 +53,14 @@
   };
 
   var closePopup = function () {
-    mapBlock.removeChild(document.querySelector('.map__card'));
-    var pinsOnMap = document.querySelectorAll('.map__pin');
-    pinsOnMap.forEach(function (item) {
-      if (item.classList.contains('map__pin--active')) {
-        item.classList.remove('map__pin--active');
-      }
-    });
-  };
-
-  var closeAllPopup = function () {
-    var mapBlockChildren = mapBlock.children;
-    for (var i = 0; i < mapBlockChildren.length; i++) {
-      if (mapBlockChildren[i].classList.contains('map__card')) {
-        closePopup();
-      }
+    if (document.querySelector('.map__card')) {
+      mapBlock.removeChild(document.querySelector('.map__card'));
+      var pinsOnMap = document.querySelectorAll('.map__pin');
+      pinsOnMap.forEach(function (item) {
+        if (item.classList.contains('map__pin--active')) {
+          item.classList.remove('map__pin--active');
+        }
+      });
     }
   };
 
@@ -94,7 +87,7 @@
 
   var onChangeFilter = function () {
     debounce(function () {
-      closeAllPopup();
+      closePopup();
       var delPins = document.querySelectorAll('.map__pin:not(.map__pin--main)');
       for (var i = 0; i < delPins.length; i++) {
         pinList.removeChild(delPins[i]);
@@ -106,28 +99,28 @@
   mapFilters.addEventListener('change', onChangeFilter);
   housingFeaturesFilter.addEventListener('change', onChangeFilter);
 
-  fieldAddress.setAttribute('value', (parseInt(mapPinMain.style.left, 10) + parseInt((MAP_PIN_MAIN_WIDTH / 2), 10)) + ', ' + (parseInt(mapPinMain.style.top, 10) + MAP_PIN_MAIN_HEIGHT)); // внесение координат конца метки в поле адреса
+  fieldAddress.setAttribute('value', (parseInt(mapPinMain.style.left, 10) + parseInt((MAP_PIN_MAIN_WIDTH / 2), 10)) + ', ' + (parseInt(mapPinMain.style.top, 10) + MAP_PIN_MAIN_HEIGHT));
 
-  mapFilters.classList.add('ad-form--disabled'); // добавление mapFilters класса ad-form--disabled
+  mapFilters.classList.add('ad-form--disabled');
 
-  mapPinMain.addEventListener('mousedown', function (evt) { // отслеживание нажатия кнопки мыши
+  mapPinMain.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
 
-    if (mapBlock.classList.contains('map--faded')) { // условие ограничивающее повление меток при каждом нажатии
-      window.backend.onLoad(onSuccess, window.util.getErrorBlock); // добавление созданного фрагмента в разметку
+    if (mapBlock.classList.contains('map--faded')) {
+      window.backend.onLoad(onSuccess, window.util.getErrorBlock);
     }
 
     mapBlock.classList.remove('map--faded');
     adForm.classList.remove('ad-form--disabled');
     mapFilters.classList.remove('ad-form--disabled');
-    makeFieldsetAnabled(fieldsetList);
+    makeFieldsetEnabled(fieldsetList);
 
     var startCoords = {
       x: evt.clientX,
       y: evt.clientY
     };
 
-    var onMouseMove = function (moveEvt) { // отслеживание премещения мыши
+    var onMouseMove = function (moveEvt) {
       moveEvt.preventDefault();
 
       var shift = {
@@ -140,21 +133,21 @@
         y: moveEvt.clientY
       };
       mapPinMain.style.top = (mapPinMain.offsetTop - shift.y) + 'px';
-      if (parseInt(mapPinMain.style.top, 10) <= (Y_TOP_BORDER - MAP_PIN_MAIN_HEIGHT)) { // условие ограничивающее поле перемещения
+      if (parseInt(mapPinMain.style.top, 10) <= (Y_TOP_BORDER - MAP_PIN_MAIN_HEIGHT)) {
         mapPinMain.style.top = (Y_TOP_BORDER - MAP_PIN_MAIN_HEIGHT) + 'px';
       } else if (parseInt(mapPinMain.style.top, 10) >= Y_BOTTOM_BORDER) {
         mapPinMain.style.top = Y_BOTTOM_BORDER + 'px';
       }
       mapPinMain.style.left = (mapPinMain.offsetLeft - shift.x) + 'px';
-      if (parseInt(mapPinMain.style.left, 10) <= (X_LEFT_BORDER - (MAP_PIN_MAIN_WIDTH / 2))) { // условие ограничивающее поле перемещения
+      if (parseInt(mapPinMain.style.left, 10) <= (X_LEFT_BORDER - (MAP_PIN_MAIN_WIDTH / 2))) {
         mapPinMain.style.left = (X_LEFT_BORDER - (MAP_PIN_MAIN_WIDTH / 2)) + 'px';
       } else if (parseInt(mapPinMain.style.left, 10) >= X_RIGHT_BORDER - (MAP_PIN_MAIN_WIDTH / 2)) {
         mapPinMain.style.left = (X_RIGHT_BORDER - (MAP_PIN_MAIN_WIDTH / 2)) + 'px';
       }
 
-      fieldAddress.setAttribute('value', (parseInt(mapPinMain.style.left, 10) + parseInt((MAP_PIN_MAIN_WIDTH / 2), 10)) + ', ' + (parseInt(mapPinMain.style.top, 10) + MAP_PIN_MAIN_HEIGHT)); // внесение координат конца метки в поле адреса
+      fieldAddress.setAttribute('value', (parseInt(mapPinMain.style.left, 10) + parseInt((MAP_PIN_MAIN_WIDTH / 2), 10)) + ', ' + (parseInt(mapPinMain.style.top, 10) + MAP_PIN_MAIN_HEIGHT));
     };
-    var onMouseUp = function (upEvt) { // отслеживание отпускания кнопки мыши
+    var onMouseUp = function (upEvt) {
       upEvt.preventDefault();
 
       document.removeEventListener('mousemove', onMouseMove);

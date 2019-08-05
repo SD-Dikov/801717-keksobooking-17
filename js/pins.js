@@ -19,7 +19,7 @@
 
   window.pins = {
 
-    getPinList: function (dataList) { // функция создания метки на основе шаблона и заполнения ее данными
+    getPinList: function (dataList) {
       var checkedFeaturesList = housingFeaturesFilter.querySelectorAll('input:checked');
       var numberedDataList = dataList;
       var filteredDataList = numberedDataList;
@@ -77,8 +77,8 @@
 
       var pinElements = [];
       for (var i = 0; i < filteredDataList.length; i++) {
-        var pinTamplate = document.querySelector('#pin').content.querySelector('.map__pin');
-        var pinElement = pinTamplate.cloneNode(true);
+        var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
+        var pinElement = pinTemplate.cloneNode(true);
         pinElement.style.left = filteredDataList[i].location.x - (PinSize.X / 2) + 'px';
         pinElement.style.top = filteredDataList[i].location.y - PinSize.Y + 'px';
         pinElement.name = filteredDataList[i].dataListIndex;
@@ -88,7 +88,7 @@
       }
       return pinElements;
     },
-    getPinsFragment: function (pinsList) { // функция создания фрагмента, состоящего из заполненных данными шаблонов меток
+    getPinsFragment: function (pinsList) {
       var pinsFragment = document.createDocumentFragment();
       var pinsOnMap;
       if (pinsList.length < PINS_QUANTITY) {
@@ -96,7 +96,7 @@
       } else {
         pinsOnMap = pinsList.slice(0, PINS_QUANTITY);
       }
-      for (var i = 0; i < pinsOnMap.length; i++) { // цикл, на каждой итерации которого, вызывается функция создания метки на основе шаблона и заполнения ее данными, количество циклов ограниченно длиной массива с данными
+      for (var i = 0; i < pinsOnMap.length; i++) {
         pinsFragment.appendChild(pinsOnMap[i]);
       }
       return pinsFragment;

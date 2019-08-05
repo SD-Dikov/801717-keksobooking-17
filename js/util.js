@@ -6,8 +6,8 @@
 
     getErrorBlock: function () {
       var mainBlock = document.querySelector('main');
-      var errorTamplate = document.querySelector('#error').content.querySelector('.error');
-      mainBlock.appendChild(errorTamplate.cloneNode(true));
+      var errorTemplate = document.querySelector('#error').content.querySelector('.error');
+      mainBlock.appendChild(errorTemplate.cloneNode(true));
 
       var errorBlock = document.querySelector('.error');
       var removeErrorBlock = function () {

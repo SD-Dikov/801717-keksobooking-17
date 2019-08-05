@@ -1,13 +1,15 @@
 'use strict';
 
 (function () {
+  var SUCCESS_CODE = 200;
+
   window.backend = {
     onLoad: function (onLoad, onError) {
       var xhr = new XMLHttpRequest();
       xhr.responseType = 'json';
 
       xhr.addEventListener('load', function () {
-        if (xhr.status === 200) {
+        if (xhr.status === SUCCESS_CODE) {
           onLoad(xhr.response);
         } else {
           onError();
@@ -23,7 +25,7 @@
       xhr.responseType = 'json';
 
       xhr.addEventListener('load', function () {
-        if (xhr.status === 200) {
+        if (xhr.status === SUCCESS_CODE) {
           upLoad();
         } else {
           onError();

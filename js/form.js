@@ -34,21 +34,21 @@
   var fieldAddress = document.querySelector('#address');
   var resetButton = document.querySelector('.ad-form__reset');
 
-  var makeFieldsetDisabled = function (elementList) { // функция добавления элементам из коллекции атрибута disabled
+  var makeFieldsetDisabled = function (elementList) {
     for (var i = 0; i < elementList.length; i++) {
       elementList[i].setAttribute('disabled', 'disabled');
     }
   };
 
-  var setTime = function (evt) { // функция зависимости полей времени
+  var setTime = function (evt) {
     var select = evt.target === fieldTimeIn ? fieldTimeOut : fieldTimeIn;
     select.value = evt.target.value;
   };
 
   var getSuccessBlock = function () {
     var mainBlock = document.querySelector('main');
-    var successTamplate = document.querySelector('#success').content.querySelector('.success');
-    mainBlock.appendChild(successTamplate.cloneNode(true));
+    var successTemplate = document.querySelector('#success').content.querySelector('.success');
+    mainBlock.appendChild(successTemplate.cloneNode(true));
 
     var successBlock = document.querySelector('.success');
     var removeSuccessBlock = function () {
@@ -74,7 +74,7 @@
     getSuccessBlock();
   };
 
-  var getMinPrice = function (house, placeTypes) { // функция получения минимальной цены, в зависимости от типа жилья
+  var getMinPrice = function (house, placeTypes) {
     var minPrice;
     for (var i = 0; i < placeTypes.length; i++) {
       if (house === placeTypes[i].house) {
@@ -162,22 +162,22 @@
     });
   };
 
-  makeFieldsetDisabled(fieldsetList); // блокировка всех fieldset внутри формы ad-form
+  makeFieldsetDisabled(fieldsetList);
 
   resetButton.addEventListener('click', function (evt) {
     evt.preventDefault();
     getDefaultView();
   });
 
-  fieldType.addEventListener('change', function () { // изменить тип жилья
+  fieldType.addEventListener('change', function () {
     fieldPrice.min = getMinPrice(fieldType.value, window.util.PLACE_TYPE);
     fieldPrice.placeholder = getMinPrice(fieldType.value, window.util.PLACE_TYPE);
   });
 
-  fieldTimeIn.addEventListener('change', function (evt) { // обработчик измененения времени въезда, изменяющий время выезда
+  fieldTimeIn.addEventListener('change', function (evt) {
     setTime(evt);
   });
-  fieldTimeOut.addEventListener('change', function (evt) { // обработчик измененения времени выезда, изменяющий время въезда
+  fieldTimeOut.addEventListener('change', function (evt) {
     setTime(evt);
   });
 
