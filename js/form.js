@@ -16,8 +16,10 @@
 
   var MAP_PIN_MAIN_WIDTH = 66;
   var MAP_PIN_MAIN_HEIGHT = 80;
+  var DEFAULT_AVATAR = 'img/muffin-grey.svg';
   var adForm = document.querySelector('.ad-form');
   var fieldsetList = adForm.querySelectorAll('fieldset');
+  var fieldsetSubmit = adForm.querySelector('.ad-form__element--submit');
   var fieldTimeIn = document.querySelector('#timein');
   var fieldTimeOut = document.querySelector('#timeout');
   var fieldType = document.querySelector('#type');
@@ -33,6 +35,8 @@
   var mapPinMainDefaultY = mapPinMain.style.top;
   var fieldAddress = document.querySelector('#address');
   var resetButton = document.querySelector('.ad-form__reset');
+  var avatarPreview = document.querySelector('.ad-form-header__preview img');
+  var housingPhotoPreview = document.querySelector('.ad-form__photo');
 
   var makeFieldsetDisabled = function (elementList) {
     for (var i = 0; i < elementList.length; i++) {
@@ -58,6 +62,7 @@
     successBlock.addEventListener('click', function (evt) {
       evt.preventDefault();
       removeSuccessBlock();
+      document.removeEventListener('keydown', onEscCloseSuccessBlock);
     });
 
     var onEscCloseSuccessBlock = function (evt) {
@@ -72,6 +77,11 @@
   var onSuccess = function () {
     getDefaultView();
     getSuccessBlock();
+  };
+
+  var onError = function () {
+    window.util.getErrorBlock();
+    fieldsetSubmit.disabled = false;
   };
 
   var getMinPrice = function (house, placeTypes) {
@@ -93,10 +103,17 @@
   };
 
   var getDefaultView = function () {
+    var housingPhotos = housingPhotoPreview.querySelectorAll('img');
+    for (var l = 0; l < housingPhotos.length; l++) {
+      housingPhotoPreview.removeChild(housingPhotos[l]);
+    }
+
     adForm.reset();
     mapBlock.classList.add('map--faded');
     adForm.classList.add('ad-form--disabled');
     mapFilters.classList.add('ad-form--disabled');
+    avatarPreview.src = DEFAULT_AVATAR;
+
     for (var i = 0; i < fieldsetList.length; i++) {
       fieldsetList[i].disabled = true;
     }
@@ -185,6 +202,7 @@
 
   adForm.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    window.backend.upLoad(new FormData(adForm), onSuccess, window.util.getErrorBlock);
+    window.backend.upLoad(new FormData(adForm), onSuccess, onError);
+    fieldsetSubmit.disabled = true;
   });
 })();

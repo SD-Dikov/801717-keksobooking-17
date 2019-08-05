@@ -17,6 +17,7 @@
       errorBlock.addEventListener('click', function (evt) {
         evt.preventDefault();
         removeErrorBlock();
+        document.removeEventListener('keydown', onEscCloseErrorBlock);
       });
 
       var onEscCloseErrorBlock = function (evt) {
